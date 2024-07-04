@@ -1,9 +1,7 @@
 package com.example.projekt_dva.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
 import java.util.UUID;
 
 @Entity
@@ -14,7 +12,11 @@ public class User {
     private Long id;
     private String name;
     private String surname;
+
+    @Column(unique = true)
     private String personID;
+
+    @Column(unique = true)
     private String uuid;
 
     public User() {

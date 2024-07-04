@@ -5,6 +5,7 @@ import com.example.projekt_dva.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -14,7 +15,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/user")
-    public User createUser(@RequestBody User user) {
+    public User createUser(@RequestBody User user) throws IOException {
         return userService.createUser(user);
     }
 
@@ -37,4 +38,5 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
+
 }
