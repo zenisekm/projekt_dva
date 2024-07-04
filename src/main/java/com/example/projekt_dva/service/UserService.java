@@ -18,10 +18,13 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(User user) throws IOException {
+    @Autowired
+    private LoadFile loadFile;
 
-        List<String> personIds = Files.readAllLines(Paths.get("dataPersonId.txt"));
-
+    public User createUser(User user) {
+        // Načtení personIDList ze souboru
+        loadFile.loadPersonIDFromFile("dataPersonId.txt");
+        List<String> personIds = loadFile.getPersonIDList();
 
         List<String> usedPersonIds = userRepository.findAll()
                 .stream()
@@ -34,10 +37,7 @@ public class UserService {
             throw new RuntimeException("No unique personID available");
         }
 
-
         user.setPersonID(personIds.get(0));
-
-
         user.setUuid(UUID.randomUUID().toString());
 
         return userRepository.save(user);
