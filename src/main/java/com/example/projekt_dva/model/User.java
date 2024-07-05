@@ -13,10 +13,7 @@ public class User {
     private String name;
     private String surname;
 
-    @Column(unique = true)
     private String personID;
-
-    @Column(unique = true)
     private String uuid;
 
     public User() {

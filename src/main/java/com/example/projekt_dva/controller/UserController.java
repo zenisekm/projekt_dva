@@ -11,11 +11,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {
+
     @Autowired
     private UserService userService;
 
     @PostMapping("/user")
-    public User createUser(@RequestBody User user) throws IOException {
+    public User createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
 
@@ -38,5 +39,6 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
+
 
 }
