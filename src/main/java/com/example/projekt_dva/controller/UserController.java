@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
-@RequestMapping("/users/v1")
+@RequestMapping("/api/v1")
 public class UserController {
 
     private static final Logger logger = Logger.getLogger(UserController.class.getName());
