@@ -4,8 +4,10 @@ import com.example.projekt_dva.model.User;
 import com.example.projekt_dva.service.UserService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -18,11 +20,11 @@ public class UserController {
 
 
     /// test na web
-        @GetMapping("/test")
-        public String testEndpoint() {
-            logger.info("Received request to test endpoint");
-            return "Test endpoint is working!";
-        }
+    @GetMapping("/test")
+    public String testEndpoint() {
+        logger.info("Received request to test endpoint");
+        return "Test endpoint is working!";
+    }
 
     ///
 
@@ -31,9 +33,11 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/user")
-    public User createUser(@RequestBody User user) {
+    public User createUser(@RequestBody User user) throws IOException {
         return userService.createUser(user);
     }
+
+
 
     @GetMapping("/user/{id}")
     public User getUserById(@PathVariable Long id) {
@@ -45,9 +49,10 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @PutMapping("/user")
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user.getId(), user);
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        User updatedUser = userService.updateUser(id, user);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/user/{id}")

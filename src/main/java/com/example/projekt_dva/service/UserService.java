@@ -5,6 +5,9 @@ import com.example.projekt_dva.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,24 +18,34 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(User user) {
+    public User createUser(User user) throws IOException {
         if (user.getPersonID() == null) {
             throw new IllegalStateException("PersonID cannot be null");
         }
 
-        // Log personID for debugging
+
         System.out.println("Creating user with personID: " + user.getPersonID());
 
-        // Check if personID already exists
+
+        if (!isPersonIdValid(user.getPersonID())) {
+            throw new IllegalStateException("PersonID is not valid");
+        }
+
+
         if (userRepository.findByPersonID(user.getPersonID()).isPresent()) {
             throw new IllegalStateException("PersonID already exists");
         }
 
-        // Generate UUID for new user
+
         user.setUuid(UUID.randomUUID().toString());
 
-        // Save new user
+
         return userRepository.save(user);
+    }
+
+    private boolean isPersonIdValid(String personID) throws IOException {
+        List<String> validPersonIds = Files.readAllLines(Paths.get("dataPersonId.txt"));
+        return validPersonIds.contains(personID);
     }
 
     public User getUserById(Long id) {
@@ -49,12 +62,15 @@ public class UserService {
             User updatedUser = existingUser.get();
             updatedUser.setName(user.getName());
             updatedUser.setSurname(user.getSurname());
-            // No need to update personID and UUID
+
             return userRepository.save(updatedUser);
         } else {
             throw new IllegalStateException("User not found");
         }
     }
+
+
+
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
