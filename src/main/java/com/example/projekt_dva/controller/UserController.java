@@ -8,28 +8,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {
-
     private static final Logger logger = Logger.getLogger(UserController.class.getName());
-
-
-
     /// test na web
     @GetMapping("/test")
     public String testEndpoint() {
         logger.info("Received request to test endpoint");
         return "Test endpoint is working!";
     }
-
     ///
-
-
     @Autowired
     private UserService userService;
 
@@ -37,8 +29,6 @@ public class UserController {
     public User createUser(@RequestBody User user) throws IOException {
         return userService.createUser(user);
     }
-
-
 
     @GetMapping("/user/{id}")
     public User getUserById(@PathVariable Long id) {
