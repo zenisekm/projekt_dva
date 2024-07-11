@@ -1,3 +1,5 @@
+// discord @michalzenisek
+
 package com.example.projekt_dva;
 
 import org.springframework.boot.SpringApplication;

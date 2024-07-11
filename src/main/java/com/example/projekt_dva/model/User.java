@@ -60,3 +60,4 @@ public class User {
         this.uuid = uuid;
     }
 }
+
