@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -20,16 +21,15 @@ public class UserService {
 
     public User createUser(User user) throws IOException {
         if (user.getPersonID() == null) {
-            throw new IllegalStateException("PersonID cannot be null");
+            throw new IllegalArgumentException("PersonID cannot be null");
         }
 
-        System.out.println("Creating user with personID: " + user.getPersonID());
         if (!isPersonIdValid(user.getPersonID())) {
-            throw new IllegalStateException("PersonID is not valid");
+            throw new IllegalArgumentException("PersonID is not valid");
         }
 
         if (userRepository.findByPersonID(user.getPersonID()).isPresent()) {
-            throw new IllegalStateException("PersonID already exists");
+            throw new IllegalArgumentException("PersonID already exists");
         }
 
         user.setUuid(UUID.randomUUID().toString());
@@ -37,12 +37,29 @@ public class UserService {
     }
 
     private boolean isPersonIdValid(String personID) throws IOException {
-        List<String> validPersonIds = Files.readAllLines(Paths.get("dataPersonId.txt"));
-        return validPersonIds.contains(personID);
+        try {
+            List<String> validPersonIds = Files.readAllLines(Paths.get("dataPersonId.txt"));
+            return validPersonIds.contains(personID);
+        } catch (NoSuchFileException e) {
+            throw new IOException("dataPersonId.txt file not found", e);
+        }
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new IllegalStateException("User not found"));
+    public User getUserById(Long id, boolean detail) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            if (detail) {
+                return user.get();
+            } else {
+                User userWithoutDetails = new User();
+                userWithoutDetails.setId(user.get().getId());
+                userWithoutDetails.setName(user.get().getName());
+                userWithoutDetails.setSurname(user.get().getSurname());
+                return userWithoutDetails;
+            }
+        } else {
+            throw new IllegalArgumentException("User not found with ID: " + id);
+        }
     }
 
     public List<User> getAllUsers() {
@@ -55,17 +72,13 @@ public class UserService {
             User updatedUser = existingUser.get();
             updatedUser.setName(user.getName());
             updatedUser.setSurname(user.getSurname());
-
             return userRepository.save(updatedUser);
         } else {
-            throw new IllegalStateException("User not found");
+            throw new IllegalArgumentException("User not found with ID: " + id);
         }
     }
-
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 }
-
-
